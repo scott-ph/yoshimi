@@ -23,6 +23,7 @@
 #ifndef INTERCH_H
 #define INTERCH_H
 
+#include <atomic>
 #include <jack/ringbuffer.h>
 
 using namespace std;
@@ -67,14 +68,14 @@ class InterChange : private MiscFuncs, FileMgr
         void resolveReplies(CommandBlock *getData);
         void testLimits(CommandBlock *getData);
         float returnLimits(CommandBlock *getData);
-        unsigned char blockRead;
-        void flagsWrite(unsigned int val){__sync_and_and_fetch(&flagsValue, val);}
+        atomic_uchar blockRead;
+        void flagsWrite(unsigned int val){flagsValue = val;}
         unsigned int tick; // needs to be read by synth
 
     private:
-        unsigned int flagsValue;
-        unsigned int flagsRead(){return __sync_add_and_fetch(&flagsValue, 0);}
-        unsigned int flagsReadClear(){ return __sync_fetch_and_or(&flagsValue, 0xffffffff);}
+        atomic_uint flagsValue;
+        unsigned int flagsRead(){return flagsValue;}
+        unsigned int flagsReadClear(){return flagsValue.fetch_or(~0U);}
 
         void *sortResultsThread(void);
         static void *_sortResultsThread(void *arg);

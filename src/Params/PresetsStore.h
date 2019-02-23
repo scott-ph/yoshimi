@@ -28,6 +28,8 @@
 #ifndef PRESETSSTORE_H
 #define PRESETSSTORE_H
 
+#include <atomic>
+
 #include "Misc/Config.h"
 #include "Misc/MiscFuncs.h"
 #include "Interface/FileMgr.h"
@@ -67,7 +69,7 @@ class PresetsStore : MiscFuncs, FileMgr
         void clearpresets(void);
 
         struct _clipboard{
-            char *data;
+            atomic_uintptr_t data;
             string type;
         };
         static _clipboard clipboard;

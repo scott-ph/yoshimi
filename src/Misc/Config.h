@@ -30,6 +30,7 @@
 
 #include <csignal>
 #include <cstring>
+#include <atomic>
 #include <deque>
 #include <list>
 
@@ -221,10 +222,10 @@ class Config : public MiscFuncs, FileMgr
         void AntiDenormals(bool set_daz_ftz);
         void saveJackSession(void);
 
-        int sigIntActive;
-        int ladi1IntActive;
+        atomic_int sigIntActive;
+        atomic_int ladi1IntActive;
         int sse_level;
-        int jsessionSave;
+        atomic_int jsessionSave;
         const string programcommand;
         string jackSessionDir;
 

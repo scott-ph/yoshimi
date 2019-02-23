@@ -40,7 +40,7 @@ PresetsStore::PresetsStore(SynthEngine *_synth) :
     preset_extension(".xpz"),
     synth(_synth)
 {
-    clipboard.data = NULL;
+    clipboard.data = 0;
     clipboard.type.clear();
 
     for (int i = 0; i < MAX_PRESETS; ++i)
@@ -53,12 +53,8 @@ PresetsStore::PresetsStore(SynthEngine *_synth) :
 
 PresetsStore::~PresetsStore()
 {
-    if (clipboard.data != NULL)
-    {
-        char *_data = __sync_fetch_and_and(&clipboard.data, 0);
-        free(_data);
-
-    }
+    char *_data = reinterpret_cast<char *>(clipboard.data.exchange(0));
+    free(_data);
     clearpresets();
 }
 
@@ -67,21 +63,22 @@ PresetsStore::~PresetsStore()
 void PresetsStore::copyclipboard(XMLwrapper *xml, string type)
 {
     clipboard.type = type;
-    if (clipboard.data != NULL)
-    {
-        char *_data = __sync_fetch_and_and(&clipboard.data, 0);
-        free(_data);
-
-    }
-    clipboard.data = xml->getXMLdata();
+    uintptr_t newdata = reinterpret_cast<uintptr_t>(xml->getXMLdata());
+    uintptr_t olddata = clipboard.data.exchange(newdata);
+    free(reinterpret_cast<char *>(olddata));
 }
 
 
 bool PresetsStore::pasteclipboard(XMLwrapper *xml)
 {
-    if (clipboard.data != NULL)
+    uintptr_t empty = 0;
+    uintptr_t udata = clipboard.data.exchange(0);
+    char *data = reinterpret_cast<char *>(udata);
+    if (data != NULL)
     {
-        xml->putXMLdata(clipboard.data);
+        xml->putXMLdata(data);
+        if (!clipboard.data.compare_exchange_strong(empty, udata))
+            free(data);
         return true;
     }
     return false;

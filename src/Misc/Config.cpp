@@ -976,10 +976,9 @@ bool Config::startThread(pthread_t *pth, void *(*thread_fn)(void*), void *arg,
 void Config::signalCheck(void)
 {
     #if defined(JACK_SESSION)
-        int jsev = __sync_fetch_and_add(&jsessionSave, 0);
-        if (jsev != 0)
+        int jsev = jsessionSave.exchange(0);
+        if (jsev)
         {
-            __sync_and_and_fetch(&jsessionSave, 0);
             switch (jsev)
             {
                 case JackSessionSave:
@@ -1000,9 +999,8 @@ void Config::signalCheck(void)
         }
     #endif
 
-    if (ladi1IntActive)
+    if (ladi1IntActive.exchange(0))
     {
-        __sync_and_and_fetch(&ladi1IntActive, 0);
         saveSessionData(StateFile);
     }
 
@@ -1014,13 +1012,13 @@ void Config::signalCheck(void)
 void Config::setInterruptActive(void)
 {
     Log("Interrupt received", 1);
-    __sync_or_and_fetch(&sigIntActive, 0xFF);
+    sigIntActive |= 0xFF;
 }
 
 
 void Config::setLadi1Active(void)
 {
-    __sync_or_and_fetch(&ladi1IntActive, 0xFF);
+    ladi1IntActive |= 0xFF;
 }
 
 
@@ -1037,8 +1035,7 @@ bool Config::restoreJsession(void)
 void Config::setJackSessionSave(int event_type, string session_file)
 {
     jackSessionFile = session_file;
-    __sync_and_and_fetch(&jsessionSave, 0);
-    __sync_or_and_fetch(&jsessionSave, event_type);
+    jsessionSave = event_type;
 }
 
 
