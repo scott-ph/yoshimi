@@ -27,6 +27,7 @@
 */
 
 #include <cmath>
+#include <algorithm>
 #include <iostream>
 
 using namespace std;
@@ -228,7 +229,7 @@ float OscilGen::basefunc_triangle(float x, float a)
         x = (1.0f - x) * 4.0f - 1.0f;
     x /= -a;
     if (x < -1.0f)
-        x =- 1.0f;
+        x = -1.0f;
     if (x > 1.0f)
         x = 1.0f;
     return x;
@@ -1005,7 +1006,7 @@ void OscilGen::prepare(void)
         }
 
         if (Phmag[i] < 64)
-            hmag[i] =- hmag[i];
+            hmag[i] = -hmag[i];
     }
 
     // remove the harmonics where Phmag[i]==64
@@ -1019,7 +1020,7 @@ void OscilGen::prepare(void)
     {   // the sine case
         for (int i = 0; i < MAX_AD_HARMONICS; ++i)
         {
-            oscilFFTfreqs.c[i + 1] =- hmag[i] * sinf(hphase[i] * (i + 1)) / 2.0f;
+            oscilFFTfreqs.c[i + 1] = -hmag[i] * sinf(hphase[i] * (i + 1)) / 2.0f;
             oscilFFTfreqs.s[i + 1] = hmag[i] * cosf(hphase[i] * (i + 1)) / 2.0f;
         }
     }
@@ -1074,7 +1075,7 @@ void OscilGen::prepare(void)
 
 void OscilGen::adaptiveharmonic(FFTFREQS f, float freq)
 {
-    if ((Padaptiveharmonics == 0) /*||(freq<1.0)*/)
+    if (Padaptiveharmonics == 0)
         return;
     if (freq < 1.0f)
         freq = 440.0f;
