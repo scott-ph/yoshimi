@@ -81,7 +81,7 @@ class Config : public MiscFuncs, FileMgr
         void signalCheck(void);
         void setRtprio(int prio);
         bool startThread(pthread_t *pth, void *(*thread_fn)(void*), void *arg,
-                         bool schedfifo, char lowprio, bool create_detached = true, string name = "");
+                         bool schedfifo, char lowprio, string name = "");
         string programCmd(void) { return programcommand; }
 
         bool isRuntimeSetupCompleted() {return bRuntimeSetupCompleted;}
