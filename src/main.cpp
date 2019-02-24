@@ -36,10 +36,10 @@ using namespace std;
 #include "Misc/Config.h"
 #include "Misc/SynthEngine.h"
 #include "MusicIO/MusicClient.h"
+#include <future>
 #include <map>
 #include <list>
 #include <pthread.h>
-#include <semaphore.h>
 #include <cstdio>
 #include <unistd.h>
 
@@ -109,7 +109,8 @@ static void *mainGuiThread(void *arg)
     Fl::lock();
 #endif
 
-    sem_post((sem_t *)arg);
+    promise<void> *started = static_cast<promise<void> *>(arg);
+    started->set_value();
 
     map<SynthEngine *, MusicClient *>::iterator it;
 
@@ -391,7 +392,7 @@ int main(int argc, char *argv[])
 #endif
     pthread_t thr;
     pthread_attr_t attr;
-    sem_t semGui;
+    promise<void> guiFltkReady;
 
     if (mainCreateNewInstance(0, false) == -1)
     {
@@ -409,18 +410,15 @@ int main(int argc, char *argv[])
 
         cout << "\nExisting config older than " << MIN_CONFIG_MAJOR << "." << MIN_CONFIG_MINOR << "\nCheck settings, save and restart.\n"<< endl;
     }
-    if(sem_init(&semGui, 0, 0) == 0)
+    if (pthread_attr_init(&attr) == 0)
     {
-        if (pthread_attr_init(&attr) == 0)
+        if (pthread_create(&thr, &attr, mainGuiThread, (void *)&guiFltkReady) == 0)
         {
-            if (pthread_create(&thr, &attr, mainGuiThread, (void *)&semGui) == 0)
-            {
 #ifdef GUI_FLTK
-                guiStarted = true;
+            guiStarted = true;
 #endif
-            }
-            pthread_attr_destroy(&attr);
         }
+        pthread_attr_destroy(&attr);
     }
 #ifdef GUI_FLTK
     if (!guiStarted)
@@ -428,8 +426,7 @@ int main(int argc, char *argv[])
         cout << "Yoshimi can't start main gui loop!" << endl;
         goto bail_out;
     }
-    sem_wait(&semGui);
-    sem_destroy(&semGui);
+    guiFltkReady.get_future().wait();
 #endif
     memset(&yoshimiSigAction, 0, sizeof(yoshimiSigAction));
     yoshimiSigAction.sa_handler = yoshimiSigHandler;

@@ -26,7 +26,7 @@
 #include <cmath>
 #include <string>
 #include <list>
-#include <semaphore.h>
+#include <mutex>
 
 #include "globals.h"
 
@@ -37,8 +37,8 @@ static list<string> miscList;
 class MiscFuncs
 {
     public:
-        MiscFuncs() {sem_init(&miscmsglock, 0, 1);}
-        ~MiscFuncs() {sem_destroy(&miscmsglock);}
+        MiscFuncs() {}
+        ~MiscFuncs() {}
         string asString(int n);
         string asString(long long n);
         string asString(unsigned long n);
@@ -83,7 +83,7 @@ class MiscFuncs
 
         float dB2rap(float dB);
         float rap2dB(float rap);
-        sem_t miscmsglock;
+        mutex miscmsglock;
 };
 
 void invSignal(float *sig, size_t len);

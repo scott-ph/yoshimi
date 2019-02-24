@@ -33,7 +33,6 @@
 
 #include <string>
 #include <vector>
-#include <semaphore.h>
 #include <jack/jack.h>
 #include <jack/ringbuffer.h>
 

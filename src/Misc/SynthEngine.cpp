@@ -183,8 +183,6 @@ SynthEngine::~SynthEngine()
     if (fft)
         delete fft;
 
-    sem_destroy(&partlock);
-    sem_destroy(&mutelock);
     if (ctl)
         delete ctl;
     getRemoveSynthId(true, uniqueId);
@@ -242,9 +240,6 @@ bool SynthEngine::Init(unsigned int audiosrate, int audiobufsize)
         Runtime.Log("SynthEngine failed to allocate fft");
         goto bail_out;
     }
-
-    sem_init(&partlock, 0, 1);
-    sem_init(&mutelock, 0, 1);
 
     for (int npart = 0; npart < NUM_MIDI_PARTS; ++npart)
     {
@@ -1745,9 +1740,8 @@ void SynthEngine::resetAll(bool andML)
 // Enable/Disable a part
 void SynthEngine::partonoffLock(int npart, int what)
 {
-    sem_wait(&partlock);
+    lock_guard<mutex> guard(partlock);
     partonoffWrite(npart, what);
-    sem_post(&partlock);
 }
 
 /*
@@ -1828,16 +1822,14 @@ bool SynthEngine::isMuted(void)
 
 void SynthEngine::Unmute()
 {
-    sem_wait(&mutelock);
+    lock_guard<mutex> guard(mutelock);
     mutewrite(2);
-    sem_post(&mutelock);
 }
 
 void SynthEngine::Mute()
 {
-    sem_wait(&mutelock);
+    lock_guard<mutex> guard(mutelock);
     mutewrite(-1);
-    sem_post(&mutelock);
 }
 
 /*

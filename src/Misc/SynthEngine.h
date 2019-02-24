@@ -30,7 +30,7 @@
 
 #include <limits.h>
 #include <cstdlib>
-#include <semaphore.h>
+#include <mutex>
 #include <jack/ringbuffer.h>
 
 using namespace std;
@@ -142,7 +142,7 @@ class SynthEngine : private SynthHelper, MiscFuncs, FileMgr
         void partonoffLock(int npart, int what);
         void partonoffWrite(int npart, int what);
         char partonoffRead(int npart);
-        sem_t partlock;
+        mutex partlock;
         unsigned char legatoPart;
         void setPartMap(int npart);
         void setAllPartMaps(void);
@@ -152,7 +152,7 @@ class SynthEngine : private SynthHelper, MiscFuncs, FileMgr
         void Mute(void);
         void mutewrite(int what);
         bool isMuted(void);
-        sem_t mutelock;
+        mutex mutelock;
 
         float getLimits(CommandBlock *getData);
         float getVectorLimits(CommandBlock *getData);

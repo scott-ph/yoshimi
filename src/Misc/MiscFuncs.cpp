@@ -325,7 +325,8 @@ int MiscFuncs::miscMsgPush(string _text)
 {
     if (_text.empty())
         return NO_MSG;
-    sem_wait(&miscmsglock);
+
+    lock_guard<mutex> guard(miscmsglock);
 
     string text = _text;
     list<string>::iterator it = miscList.begin();
@@ -351,7 +352,6 @@ int MiscFuncs::miscMsgPush(string _text)
     }
 
     int result = idx; // in case of a new entry before return
-    sem_post(&miscmsglock);
     return result;
 }
 
@@ -360,7 +360,8 @@ string MiscFuncs::miscMsgPop(int _pos)
 {
     if (_pos >= NO_MSG)
         return "";
-    sem_wait(&miscmsglock);
+
+    lock_guard<mutex> guard(miscmsglock);
 
     int pos = _pos;
     list<string>::iterator it = miscList.begin();
@@ -383,7 +384,6 @@ string MiscFuncs::miscMsgPop(int _pos)
     {
         swap (result, *it); // in case of a new entry before return
     }
-    sem_post(&miscmsglock);
     return result;
 }
 

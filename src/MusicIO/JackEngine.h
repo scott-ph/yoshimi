@@ -25,7 +25,6 @@
 
 #include <string>
 #include <pthread.h>
-#include <semaphore.h>
 #include <jack/jack.h>
 #include <jack/ringbuffer.h>
 
