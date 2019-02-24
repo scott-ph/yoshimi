@@ -946,7 +946,7 @@ float PADnoteParameters::getLimits(CommandBlock *getData)
     int request = type & TOPLEVEL::type::Default;
     int control = getData->data.control;
 
-    type &= (TOPLEVEL::source::MIDI || TOPLEVEL::source::CLI || TOPLEVEL::source::GUI); // source bits only
+    type &= (TOPLEVEL::source::MIDI | TOPLEVEL::source::CLI | TOPLEVEL::source::GUI); // source bits only
 
     // padnote defaults
     int min = 0;

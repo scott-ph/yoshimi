@@ -1624,7 +1624,7 @@ float OscilGen::getLimits(CommandBlock *getData)
     int control = getData->data.control;
     int insert = getData->data.insert;
 
-    type &= (TOPLEVEL::source::MIDI || TOPLEVEL::source::CLI || TOPLEVEL::source::GUI); // source bits only
+    type &= (TOPLEVEL::source::MIDI | TOPLEVEL::source::CLI | TOPLEVEL::source::GUI); // source bits only
 
     // oscillator defaults
     int min = 0;

@@ -814,7 +814,7 @@ void Config::Log(const string &msg, char tostderr)
         return;
     if (showGui && !(tostderr & 1) && toConsole)
         LogList.push_back(msg);
-    else if (!tostderr & 1)
+    else if (!(tostderr & 1))
         cout << msg << endl; // normal log
 
     else
