@@ -351,8 +351,9 @@ bail_out:
     return -1;
 }
 
-void *commandThread(void *arg = NULL) // silence warning
+void *commandThread(void *arg) // silence warning
 {
+    (void)arg;
     commandInt.cmdIfaceCommandLoop();
     return 0;
 }

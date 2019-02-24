@@ -321,7 +321,7 @@ void InterChange::indirectTransfers(CommandBlock *getData)
     if (write)
         __sync_or_and_fetch(&blockRead, 2);
     bool guiTo = false;
-    guiTo = guiTo; // suppress warning when headless build
+    (void)guiTo; // suppress warning when headless build
     string text;
     if (getData->data.par2 != NO_MSG)
         text = miscMsgPop(getData->data.par2);

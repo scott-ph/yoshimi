@@ -65,7 +65,7 @@ class VectorUI {: {private MiscFuncs, FileMgr}
       Fl_Menu_Button {} {
         label Options
         xywh {275 12 74 20} labelsize 12 textsize 12
-        code0 {o = o; // suppress warning}
+        code0 {(void)o; // suppress warning}
         code1 {vector <string> listType = *synth->getHistory(XML_VECTOR);}
         code2 {if (listType.size() == 0) recenthistory->deactivate(); else recenthistory->activate();}
       } {
