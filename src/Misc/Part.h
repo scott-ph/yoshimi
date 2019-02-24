@@ -190,7 +190,6 @@ class Part : private MiscFuncs, SynthHelper, FileMgr
         float *tmpoutl;
         float *tmpoutr;
         float oldfreq; // for portamento
-        int partMuted;
         bool killallnotes;
 
         // MonoMem stuff

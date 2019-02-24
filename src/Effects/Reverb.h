@@ -57,8 +57,6 @@ class Reverb : public Effect
         unsigned char Ptime;
         unsigned char Pidelay;
         unsigned char Pidelayfb;
-        unsigned char Prdelay;
-        unsigned char Perbalance;
         unsigned char Plpf;
         unsigned char Phpf; // todo 0..63 lpf, 64 = off, 65..127 = hpf(TODO)
         unsigned char Plohidamp;
@@ -79,12 +77,9 @@ class Reverb : public Effect
         void setbandwidth(unsigned char Pbandwidth_);
         void processmono(int ch, float *output);
 
-        float erbalance;
-
         // Parametrii 2
         int lohidamptype; // 0 = disable, 1 = highdamp (lowpass), 2 = lowdamp (highpass)
         int idelaylen;
-        int rdelaylen;
         int idelayk;
         float lohifb;
         float idelayfb;

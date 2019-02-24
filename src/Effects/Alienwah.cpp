@@ -25,8 +25,6 @@
     Modified July 2018
 */
 
-using namespace std;
-
 #include "Misc/SynthEngine.h"
 #include "Effects/Alienwah.h"
 

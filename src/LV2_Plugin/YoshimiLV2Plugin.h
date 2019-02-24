@@ -59,9 +59,6 @@ private:
    LV2_URID _atom_state_changed;
    LV2_URID _atom_object;
    LV2_URID _atom_event_transfer;
-   uint32_t _bufferPos;
-   uint32_t _offsetPos;
-   sem_t _midiSem;
 
    struct midi_event {
        jack_nframes_t time;
@@ -70,7 +67,6 @@ private:
 
    float *_bFreeWheel;
 
-   jack_ringbuffer_t *_midiRingBuf;
    pthread_t _pIdleThread;
 
    float *lv2Left [NUM_MIDI_PARTS + 1];
@@ -151,9 +147,8 @@ private:
         YoshimiLV2PluginUI *uiInst;
     };
     _externalUI externalUI;
-    LV2UI_Write_Function _write_function;
 public:
-    YoshimiLV2PluginUI(const char *, LV2UI_Write_Function, LV2UI_Controller, LV2UI_Widget *widget, const LV2_Feature *const *features);
+    YoshimiLV2PluginUI(const char *, LV2UI_Controller, LV2UI_Widget *widget, const LV2_Feature *const *features);
     ~YoshimiLV2PluginUI();
     bool init();
     static LV2UI_Handle	instantiate(const struct _LV2UI_Descriptor *descriptor, const char *plugin_uri, const char *bundle_path, LV2UI_Write_Function write_function, LV2UI_Controller controller, LV2UI_Widget *widget, const LV2_Feature *const *features);

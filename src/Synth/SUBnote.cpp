@@ -48,8 +48,7 @@ SUBnote::SUBnote(SUBnoteParameters *parameters, Controller *ctl_, float freq,
     log_0_001(logf(0.001f)),
     log_0_0001(logf(0.0001f)),
     log_0_00001(logf(0.00001f)),
-    synth(_synth),
-    filterStep(0)
+    synth(_synth)
 {
     ready = 0;
 

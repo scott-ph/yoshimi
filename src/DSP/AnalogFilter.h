@@ -74,7 +74,6 @@ class AnalogFilter : public Filter_, private MiscFuncs
 
         float oldc[3], oldd[3]; // old coefficients(used only if some filter parameters changes very fast, and it needs interpolation)
 
-        float xd[3], yd[3]; // used if the filter is applied more times
         bool needsinterpolation, firsttime;
         int abovenq;    // this is 1 if the frequency is above the nyquist
         int oldabovenq; // if the last time was above nyquist (used to see if it needs interpolation)

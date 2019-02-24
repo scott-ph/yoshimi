@@ -24,8 +24,6 @@
 
 //#include <endian.h>
 
-using namespace std;
-
 #include "Misc/Config.h"
 #include "Misc/SynthEngine.h"
 #include "MusicIO/AlsaEngine.h"

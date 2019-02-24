@@ -109,8 +109,6 @@ class Microtonal : private MiscFuncs, FileMgr
         } octave[MAX_OCTAVE_SIZE],
           tmpoctave[MAX_OCTAVE_SIZE];
 
-        float note_12et[128];
-
         SynthEngine *synth;
 };
 

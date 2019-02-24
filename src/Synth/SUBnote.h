@@ -156,7 +156,6 @@ class SUBnote : private SynthHelper
         const float log_0_00001; // logf(0.00001);
 
         SynthEngine *synth;
-        int filterStep;
 };
 
 #endif

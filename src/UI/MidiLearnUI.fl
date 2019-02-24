@@ -33,9 +33,6 @@ decl {\#include <FL/fl_ask.H>
     \#include "Misc/SynthEngine.h"} {private global
 }
 
-decl {using namespace std;} {public local
-}
-
 decl {\#include "MasterUI.h"} {private global
 }
 
@@ -274,8 +271,6 @@ class MidiLearnKitItem {: {public Fl_Group}
     end();} {}
   }
   decl {int n;} {private local
-  }
-  decl {char label[50];} {private local
   }
   decl {SynthEngine *synth;} {private local
   }

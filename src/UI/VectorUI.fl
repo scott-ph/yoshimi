@@ -21,9 +21,6 @@ Modified February 2019
 } {selected in_source in_header
 }
 
-decl {using namespace std;} {public local
-}
-
 decl {\#include "MasterUI.h"} {private global
 }
 

@@ -269,8 +269,6 @@ YoshimiLV2Plugin::YoshimiLV2Plugin(SynthEngine *synth, double sampleRate, const 
     _midiDataPort(NULL),
     _notifyDataPortOut(NULL),
     _midi_event_id(0),
-    _bufferPos(0),
-    _offsetPos(0),
     _bFreeWheel(NULL),
     _pIdleThread(0),
     _lv2_desc(desc)
@@ -645,11 +643,10 @@ LV2_Worker_Status YoshimiLV2Plugin::lv2_wrk_end_run(LV2_Handle instance)
 */
 
 
-YoshimiLV2PluginUI::YoshimiLV2PluginUI(const char *, LV2UI_Write_Function write_function, LV2UI_Controller controller, LV2UI_Widget *widget, const LV2_Feature * const *features)
+YoshimiLV2PluginUI::YoshimiLV2PluginUI(const char *, LV2UI_Controller controller, LV2UI_Widget *widget, const LV2_Feature * const *features)
     :_plugin(NULL),
      _masterUI(NULL),
-     _controller(controller),
-     _write_function(write_function)
+     _controller(controller)
 {
     uiHost.plugin_human_id = NULL;
     uiHost.ui_closed = NULL;
@@ -709,7 +706,8 @@ LV2UI_Handle YoshimiLV2PluginUI::instantiate(const _LV2UI_Descriptor *descriptor
     plugin_uri = plug;
     // lines above suppress warnings - may use later
 
-    YoshimiLV2PluginUI *uiinst = new YoshimiLV2PluginUI(bundle_path, write_function, controller, widget, features);
+    (void)write_function;
+    YoshimiLV2PluginUI *uiinst = new YoshimiLV2PluginUI(bundle_path, controller, widget, features);
     if (uiinst->init())
     {
         return static_cast<LV2_External_UI_Widget *>(uiinst);

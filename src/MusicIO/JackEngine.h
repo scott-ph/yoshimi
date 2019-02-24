@@ -75,7 +75,6 @@ class JackEngine : public MusicIO
 #if defined(JACK_SESSION)
             static void _jsessionCallback(jack_session_event_t *event, void *arg);
             void jsessionCallback(jack_session_event_t *event);
-            jack_session_event_t *lastevent;
 #endif
 
 #if defined(JACK_LATENCY)
