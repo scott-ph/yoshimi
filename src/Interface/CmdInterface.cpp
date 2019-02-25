@@ -5746,17 +5746,24 @@ void CmdInterface::readLimits(float value, unsigned char type, unsigned char con
     synth->getRuntime().Log(name);
 }
 
+static string homeDirPath()
+{
+#if !defined(_WIN32)
+    if (getenv("HOME") && getenv("HOME")[0] != '\0')
+        return getenv("HOME");
+    return getpwuid(getuid())->pw_dir;
+#else
+    if (getenv("USERPROFILE") && getenv("USERPROFILE")[0] != '\0')
+        return getenv("USERPROFILE");
+    return getenv("HOMEPATH");
+#endif
+}
 
 void CmdInterface::cmdIfaceCommandLoop()
 {
     // Initialise the history functionality
     // Set up the history filename
-    string hist_filename;
-
-    { // put this in a block to lose the passwd afterwards
-        struct passwd *pw = getpwuid(getuid());
-        hist_filename = string(pw->pw_dir) + string("/.yoshimi_history");
-    }
+    string hist_filename = homeDirPath() + string("/.yoshimi_history");
     using_history();
     stifle_history(80); // Never more than 80 commands
     if (read_history(hist_filename.c_str()) != 0) // reading failed
