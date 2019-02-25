@@ -25,8 +25,8 @@
 #ifndef ALSA_ENGINE_H
 #define ALSA_ENGINE_H
 
-#include <pthread.h>
 #include <string>
+#include <thread>
 #include <alsa/asoundlib.h>
 
 using namespace std;
@@ -89,7 +89,7 @@ class AlsaEngine : public MusicIO
             snd_pcm_uframes_t  buffer_size;
             int                alsaId;
             snd_pcm_state_t    pcm_state;
-            pthread_t          pThread;
+            thread             audioThread;
         } audio;
 
         struct {
@@ -97,7 +97,7 @@ class AlsaEngine : public MusicIO
             snd_seq_t           *handle;
             snd_seq_addr_t      addr;
             int                 alsaId;
-            pthread_t           pThread;
+            thread              midiThread;
         } midi;
 };
 

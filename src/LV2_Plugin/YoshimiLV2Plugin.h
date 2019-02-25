@@ -66,7 +66,7 @@ private:
 
    float *_bFreeWheel;
 
-   pthread_t _pIdleThread;
+   thread _pIdleThread;
 
    float *lv2Left [NUM_MIDI_PARTS + 1];
    float *lv2Right [NUM_MIDI_PARTS + 1];
@@ -111,8 +111,6 @@ public:
 
    const LV2_Program_Descriptor * getProgram(uint32_t index);
    void selectProgramNew(unsigned char channel, uint32_t bank, uint32_t program);
-
-   static void *static_idleThread(void *arg);
 
    static LV2_State_Status static_StateSave(LV2_Handle instance, LV2_State_Store_Function store, LV2_State_Handle handle, uint32_t flags, const LV2_Feature *const * features);
    static LV2_State_Status static_StateRestore(LV2_Handle instance, LV2_State_Retrieve_Function retrieve, LV2_State_Handle handle, uint32_t flags, const LV2_Feature *const * features);

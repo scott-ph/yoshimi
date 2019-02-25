@@ -24,7 +24,6 @@
 #define JACK_ENGINE_H
 
 #include <string>
-#include <pthread.h>
 #include <jack/jack.h>
 #include <jack/ringbuffer.h>
 
@@ -92,7 +91,6 @@ class JackEngine : public MusicIO
         struct {
             jack_port_t*       port;
             jack_ringbuffer_t *ringBuf;
-            pthread_t          pThread;
         } midi;
 
         unsigned int internalbuff;

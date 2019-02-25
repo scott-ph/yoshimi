@@ -78,8 +78,7 @@ class InterChange : private MiscFuncs, FileMgr
         unsigned int flagsReadClear(){return flagsValue.fetch_or(~0U);}
 
         void *sortResultsThread(void);
-        static void *_sortResultsThread(void *arg);
-        pthread_t  sortResultsThreadHandle;
+        thread sortResultsThreadHandle;
         void indirectTransfers(CommandBlock *getData);
         string formatScales(string text);
         string resolveVector(CommandBlock *getData);

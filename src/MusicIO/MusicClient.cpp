@@ -97,7 +97,7 @@ void *MusicClient::timerThread_fn(void *arg)
 
 
 MusicClient::MusicClient(SynthEngine *_synth, audio_drivers _audioDrv, midi_drivers _midiDrv)
-    :synth(_synth), timerThreadId(0), timerWorking(false),
+    :synth(_synth), timerWorking(false),
     audioDrv(_audioDrv), midiDrv(_midiDrv), audioIO(0), midiIO(0)
 {
     for(int i = 0; i < NUM_MIDI_PARTS + 1; i++)
@@ -222,11 +222,13 @@ bool MusicClient::Start()
     }
     else
     {
-        if(timerThreadId != 0 || timerWorking)
+        if(timerThread.joinable() || timerWorking)
         {
             return true;
         }
-        bAudio = synth->getRuntime().startThread(&timerThreadId, MusicClient::timerThread_fn, this, false, 0, "Timer?");
+        
+        timerThread = thread(MusicClient::timerThread_fn, this);
+        bAudio = true;
     }
 
     if(midiIO)
@@ -250,12 +252,10 @@ void MusicClient::Close()
     }
     else
     {
-        if(timerThreadId == 0 || timerWorking == false)
+        if(!timerThread.joinable() || timerWorking == false)
             return;
         timerWorking = false;
-        void *ret = 0;
-        pthread_join(timerThreadId, &ret);
-        timerThreadId = 0;
+        timerThread.join();
     }
 }
 

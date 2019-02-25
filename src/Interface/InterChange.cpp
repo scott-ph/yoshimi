@@ -153,11 +153,7 @@ bool InterChange::Init()
     jack_ringbuffer_reset(returnsBuffer);
 
 
-    if (!synth->getRuntime().startThread(&sortResultsThreadHandle, _sortResultsThread, this, false, 0, "CLI"))
-    {
-        synth->getRuntime().Log("Failed to start CLI resolve thread");
-        goto bail_out;
-    }
+    sortResultsThreadHandle = thread([&]{this->sortResultsThread();});
     return true;
 
 
@@ -195,12 +191,6 @@ bail_out:
         returnsBuffer = NULL;
     }
     return false;
-}
-
-
-void *InterChange::_sortResultsThread(void *arg)
-{
-    return static_cast<InterChange*>(arg)->sortResultsThread();
 }
 
 
@@ -273,8 +263,8 @@ void *InterChange::sortResultsThread(void)
 
 InterChange::~InterChange()
 {
-    if (sortResultsThreadHandle)
-        pthread_join(sortResultsThreadHandle, NULL);
+    if (sortResultsThreadHandle.joinable())
+        sortResultsThreadHandle.join();
 
     if (fromCLI)
     {

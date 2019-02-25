@@ -25,7 +25,7 @@
 #define MUSIC_CLIENT_H
 
 #include <string>
-#include <pthread.h>
+#include <thread>
 
 using namespace std;
 
@@ -54,7 +54,7 @@ class MusicClient
 {
 private:
     SynthEngine *synth;
-    pthread_t timerThreadId;
+    thread timerThread;
     static void *timerThread_fn(void*);
     bool timerWorking;
     float *buffersL [NUM_MIDI_PARTS + 1];

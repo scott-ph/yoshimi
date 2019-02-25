@@ -38,11 +38,9 @@ AlsaEngine::AlsaEngine(SynthEngine *_synth) :MusicIO(_synth)
     audio.period_size = 0;
     audio.buffer_size = 0;
     audio.alsaId = -1;
-    audio.pThread = 0;
 
     midi.handle = NULL;
     midi.alsaId = -1;
-    midi.pThread = 0;
 #if __BYTE_ORDER  == __LITTLE_ENDIAN
         little_endian = true;
 #else
@@ -156,19 +154,11 @@ void AlsaEngine::Close(void)
         synth->getRuntime().runSynth = false;
     }
 
-    if(midi.pThread != 0) //wait for midi thread to finish
-    {
-        void *ret = NULL;
-        pthread_join(midi.pThread, &ret);
-        midi.pThread = 0;
-    }
+    if(midi.midiThread.joinable()) //wait for midi thread to finish
+        midi.midiThread.join();
 
-    if(audio.pThread != 0) //wait for audio thread to finish
-    {
-        void *ret = NULL;
-        pthread_join(audio.pThread, &ret);
-        audio.pThread = 0;
-    }
+    if(audio.audioThread.joinable()) //wait for audio thread to finish
+        audio.audioThread.join();
 
     if (audio.handle != NULL)
         alsaBad(snd_pcm_close(audio.handle), "close pcm failed");
@@ -563,25 +553,13 @@ bool AlsaEngine::xrunRecover(void)
 
 bool AlsaEngine::Start(void)
 {
-    if (NULL != midi.handle && !synth->getRuntime().startThread(&midi.pThread, _MidiThread,
-                                                    this, true, 1, "Alsa midi"))
-    {
-        synth->getRuntime().Log("Failed to start Alsa midi thread");
-        goto bail_out;
-    }
-    if (NULL != audio.handle && !synth->getRuntime().startThread(&audio.pThread, _AudioThread,
-                                                     this, true, 0, "Alsa audio"))
-    {
-        synth->getRuntime().Log(" Failed to start Alsa audio thread");
-        goto bail_out;
-    }
-
+    if (NULL != midi.handle)
+        synth->getRuntime().startRealtimeThread(midi.midiThread, _MidiThread,
+                            this, 1, "Alsa midi");
+    if (NULL != audio.handle)
+        synth->getRuntime().startRealtimeThread(audio.audioThread, _AudioThread,
+                            this, 0, "Alsa audio");
     return true;
-
-bail_out:
-    synth->getRuntime().Log("Bailing from AlsaEngine Start");
-    Close();
-    return false;
 }
 
 

@@ -80,8 +80,8 @@ class Config : public MiscFuncs, FileMgr
         void setLadi1Active(void);
         void signalCheck(void);
         void setRtprio(int prio);
-        bool startThread(pthread_t *pth, void *(*thread_fn)(void*), void *arg,
-                         bool schedfifo, char lowprio, string name = "");
+        void startRealtimeThread(thread& th, void *(*thread_fn)(void*),
+                                 void *arg, char priodec, const string &name);
         string programCmd(void) { return programcommand; }
 
         bool isRuntimeSetupCompleted() {return bRuntimeSetupCompleted;}

@@ -271,7 +271,6 @@ YoshimiLV2Plugin::YoshimiLV2Plugin(SynthEngine *synth, double sampleRate, const 
     _notifyDataPortOut(NULL),
     _midi_event_id(0),
     _bFreeWheel(NULL),
-    _pIdleThread(0),
     _lv2_desc(desc)
 {
     flatbankprgs.clear();
@@ -334,7 +333,7 @@ YoshimiLV2Plugin::~YoshimiLV2Plugin()
             getProgram(flatbankprgs.size() + 1);
         }
         _synth->getRuntime().runSynth = false;
-        pthread_join(_pIdleThread, NULL);
+        _pIdleThread.join();
         delete _synth;
         _synth = NULL;
     }
@@ -366,11 +365,7 @@ bool YoshimiLV2Plugin::init()
 
     _synth->getRuntime().runSynth = true;
 
-    if (!_synth->getRuntime().startThread(&_pIdleThread, YoshimiLV2Plugin::static_idleThread, this, false, 0, "LV2 idle"))
-    {
-        synth->getRuntime().Log("Failed to start idle thread");
-        return false;
-    }
+    _pIdleThread = thread([&]{this->idleThread();});
 
     synth->getRuntime().Log("Starting in LV2 plugin mode");
     return true;
@@ -590,12 +585,6 @@ void YoshimiLV2Plugin::selectProgramNew(unsigned char channel, uint32_t bank, ui
         synth->mididecode.setMidiBankOrRootDir((short)bank, isFreeWheel);
     }
     synth->mididecode.setMidiProgram(channel, program, isFreeWheel);
-}
-
-
-void *YoshimiLV2Plugin::static_idleThread(void *arg)
-{
-    return static_cast<YoshimiLV2Plugin *>(arg)->idleThread();
 }
 
 

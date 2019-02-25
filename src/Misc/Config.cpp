@@ -30,10 +30,12 @@
 #include <fenv.h>
 #include <errno.h>
 #include <cmath>
+#include <future>
 #include <string>
 #include <argp.h>
 #include <libgen.h>
 #include <limits.h>
+#include <pthread.h>
 
 #if defined(__SSE__)
 #include <xmmintrin.h>
@@ -887,80 +889,25 @@ void Config::setRtprio(int prio)
 }
 
 
-// general thread start service
-bool Config::startThread(pthread_t *pth, void *(*thread_fn)(void*), void *arg,
-                         bool schedfifo, char priodec, string name)
+// start realtime thread
+void Config::startRealtimeThread(thread& th, void *(*thread_fn)(void*),
+                                 void *arg, char priodec, const string &name)
 {
-    pthread_attr_t attr;
-    int chk;
-    bool outcome = false, attr_initted = false;
-    while (true)
-    {
-        if (attr_initted)
-        {
-            pthread_attr_destroy(&attr);
-            attr_initted = false;
-        }
-        if ((chk = pthread_attr_init(&attr)))
-        {
-            Log("Failed to initialise thread attributes " + asString(chk), 1);
-            outcome = false;
-            break;
-        }
-        attr_initted = true;
+    shared_ptr<promise<void> > prioChanged = make_shared<promise<void> >();
+    th = thread([=]() mutable {
+        future_status status = prioChanged->get_future().wait_for(
+            chrono::seconds(5));
+        if (status != future_status::ready)
+            return;
+        prioChanged.reset();
+        (void)thread_fn(arg);
+    });
 
-        if (schedfifo)
-        {
-            if ((chk = pthread_attr_setschedpolicy(&attr, SCHED_FIFO)))
-            {
-                Log("Failed to set SCHED_FIFO policy in thread attribute "
-                            + string(strerror(errno))
-                            + " (" + asString(chk) + ")", 1);
-                schedfifo = false;
-                continue;
-            }
-            if ((chk = pthread_attr_setinheritsched(&attr, PTHREAD_EXPLICIT_SCHED)))
-            {
-                Log("Failed to set inherit scheduler thread attribute "
-                            + string(strerror(errno)) + " ("
-                            + asString(chk) + ")", 1);
-                schedfifo = false;
-                continue;
-            }
-            sched_param prio_params;
-            int prio = rtprio - priodec;
-            if (prio < 1)
-                prio = 1;
-            Log(name + " priority is " + to_string(prio), 1);
-            prio_params.sched_priority = prio;
-            if ((chk = pthread_attr_setschedparam(&attr, &prio_params)))
-            {
-                Log("Failed to set thread priority attribute ("
-                            + asString(chk) + ")  ", 3);
-                schedfifo = false;
-                continue;
-            }
-        }
-        if (!(chk = pthread_create(pth, &attr, thread_fn, arg)))
-        {
-            outcome = true;
-            break;
-        }
-        else if (schedfifo)
-        {
-            schedfifo = false;
-            continue;
-        }
-        Log("Failed to start thread (sched_other) " + asString(chk)
-            + "  " + string(strerror(errno)), 1);
-        outcome = false;
-        break;
-    }
-
-    if (attr_initted)
-        pthread_attr_destroy(&attr);
-
-    return outcome;
+    sched_param prio_params;
+    prio_params.sched_priority = max(1, rtprio - priodec);
+    if (pthread_setschedparam(th.native_handle(), SCHED_FIFO, &prio_params))
+        Log("Failed to set \"" + name + "\" priority attribute", 3);
+    prioChanged->set_value();
 }
 
 
