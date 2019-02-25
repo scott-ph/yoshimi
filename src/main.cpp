@@ -143,7 +143,7 @@ static void *mainGuiThread(void *arg)
         splashSet = false;
     do
     {
-            usleep(33333);
+            this_thread::sleep_for(chrono::microseconds(33333));
     }
 #endif
     while (firstSynth == NULL); // just wait
@@ -229,7 +229,7 @@ static void *mainGuiThread(void *arg)
             if (splashSet)
             {
                 winSplash.show();
-                usleep(1000);
+                this_thread::sleep_for(chrono::milliseconds(1));
                 if(time(&here_and_now) < 0) // no time?
                     here_and_now = old_father_time + SPLASH_TIME;
                 if ((here_and_now - old_father_time) >= SPLASH_TIME)
@@ -243,7 +243,7 @@ static void *mainGuiThread(void *arg)
         }
         else
 #endif
-            usleep(33333);
+            this_thread::sleep_for(chrono::microseconds(33333));
     }
     if (firstRuntime->configChanged && (bShowGui | bShowCmdLine)) // don't want this if no cli or gui
     {

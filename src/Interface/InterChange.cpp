@@ -25,6 +25,7 @@
 #include <algorithm>
 #include <cfloat>
 #include <bitset>
+#include <thread>
 #include <unistd.h>
 
 using namespace std;
@@ -255,7 +256,7 @@ void *InterChange::sortResultsThread(void)
             else
                 resolveReplies(&getData);
         }
-        usleep(80); // actually gives around 120 uS
+        this_thread::sleep_for(chrono::microseconds(80)); // actually gives around 120 uS
 
         /*
          * The following are low priority actions initiated by,
@@ -687,7 +688,7 @@ void InterChange::indirectTransfers(CommandBlock *getData)
                         else
                             startInstance = 0x101; // next available
                         while (startInstance > 0xff)
-                            usleep(1000);
+                            this_thread::sleep_for(chrono::milliseconds(1));
                         value = startInstance; // actual instance found
                         startInstance = 0; // just to be sure
                     }
@@ -1114,7 +1115,7 @@ float InterChange::readAllData(CommandBlock *getData)
     memcpy(tryData.bytes, getData->bytes, sizeof(tryData));
     // a false positive here is not actually a problem.
     while (blockRead)
-        usleep(10);
+        this_thread::sleep_for(chrono::microseconds(10));
     if (indirect)
     {
         /*

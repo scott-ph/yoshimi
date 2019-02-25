@@ -23,6 +23,7 @@
 #if defined(HAVE_ALSA)
 
 //#include <endian.h>
+#include <thread>
 
 #include "Misc/Config.h"
 #include "Misc/SynthEngine.h"
@@ -693,7 +694,7 @@ void *AlsaEngine::MidiThread(void)
 ;
         if(chk < 0)
         {
-            usleep(1024);
+            this_thread::sleep_for(chrono::microseconds(1024));
         }
     }
     return NULL;

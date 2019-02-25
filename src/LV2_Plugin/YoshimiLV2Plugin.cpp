@@ -30,6 +30,7 @@
 #ifdef GUI_FLTK
     #include "MasterUI.h"
 #endif
+#include <thread>
 #include <math.h>
 #include <stdio.h>
 #include <sys/types.h>
@@ -253,7 +254,7 @@ void *YoshimiLV2Plugin::idleThread()
 //        if (_synth->getRuntime().showGui)
 //            Fl::wait(0.033333);
 //        else
-            usleep(33333);
+            this_thread::sleep_for(chrono::microseconds(33333));
 
     }
     return NULL;

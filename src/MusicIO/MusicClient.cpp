@@ -27,6 +27,7 @@
 #include <iostream>
 #include <stdlib.h>
 #include <set>
+#include <thread>
 #include <unistd.h>
 
 string audio_drivers_str [] = {"no_audio", "jack_audio"
@@ -89,7 +90,7 @@ void *MusicClient::timerThread_fn(void *arg)
     while(nmc->timerWorking)
     {
         nmc->synth->MasterAudio(nmc->buffersL, nmc->buffersR);
-        usleep(sleepInterval);
+        this_thread::sleep_for(chrono::microseconds(sleepInterval));
     }
     return 0;
 }

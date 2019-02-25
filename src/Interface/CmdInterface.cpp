@@ -37,6 +37,7 @@
 #include <map>
 #include <list>
 #include <sstream>
+#include <thread>
 #include <sys/time.h>
 
 using namespace std;
@@ -4783,7 +4784,7 @@ int CmdInterface::cmdIfaceProcessCommand(char *cCmd)
                             else if (tmp > 1000)
                                 tmp = 1000;
                             Runtime.Log("Waiting " + to_string(tmp) + "mS");
-                            usleep((tmp - 1) * 1000);
+                            this_thread::sleep_for(chrono::milliseconds(tmp - 1));
                             // total processing may add up to another 1 mS
                         }
                         else
@@ -5792,7 +5793,7 @@ void CmdInterface::cmdIfaceCommandLoop()
             {
                 do
                 { // create enough delay for most ops to complete
-                    usleep(2000);
+                    this_thread::sleep_for(chrono::milliseconds(2));
                 }
                 while (synth->getRuntime().runSynth && !synth->getRuntime().finishedCLI);
             }
@@ -5816,7 +5817,7 @@ void CmdInterface::cmdIfaceCommandLoop()
             }
         }
         if (!exit && synth->getRuntime().runSynth)
-            usleep(20000);
+            this_thread::sleep_for(chrono::milliseconds(20));
     }
 
     if (write_history(hist_filename.c_str()) != 0) // writing of history file failed

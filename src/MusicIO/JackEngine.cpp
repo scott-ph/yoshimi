@@ -27,6 +27,7 @@
 #include <fcntl.h>
 #include <sys/stat.h>
 #include <sstream>
+#include <thread>
 #include <stdio.h>
 
 using namespace std;
@@ -54,7 +55,7 @@ bool JackEngine::connectServer(string server)
         if (!openJackClient(server) && tries < 2)
         {
             synth->getRuntime().Log("Failed to open jack client, trying again", 1);
-            usleep(3333);
+            this_thread::sleep_for(chrono::microseconds(3333));
         }
     }
     if (jackClient)
