@@ -62,6 +62,10 @@ decl {\#include "MasterUI.h"} {private local
 }
 
 class BankProcess_ {} {
+  Function {~BankProcess_()} {return_type virtual
+  } {
+    code {;} {}
+  }
   Function {process(void)} {return_type {virtual void}
   } {
     code {;} {}
@@ -206,6 +210,10 @@ class BankSlot {: {public Fl_Button, BankProcess_}
 }
 
 class RootProcess_ {} {
+  Function {~RootProcess_()} {return_type virtual
+  } {
+    code {;} {}
+  }
   Function {rootprocess(void)} {return_type {virtual void}
   } {
     code {;} {}

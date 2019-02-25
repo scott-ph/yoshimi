@@ -108,6 +108,10 @@ class PartSysEffSend {: {public Fl_Group, private MiscFuncs}
 }
 
 class PartUI_ {} {
+  Function {~PartUI_()} {return_type virtual
+  } {
+    code {;} {}
+  }
   Function {showparameters(int /* kititem */,int /* engine */)} {return_type virtual
   } {
     code {;} {}

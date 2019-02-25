@@ -53,7 +53,8 @@ class PresetsUI_ {} {
   } {
     code {;} {}
   }
-  Function {~PresetsUI_()} {} {
+  Function {~PresetsUI_()} {return_type virtual
+  } {
     code {;} {}
   }
 }
